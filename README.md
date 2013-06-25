@@ -25,5 +25,5 @@
 `http://{ваш домен}/plugins/vpayment/payu/payu_notify.php`
 
 
-[1]: https://raw.github.com/PayUUA/Joomla-1.5/master/settings.png
-[2]: https://raw.github.com/PayUUA/Joomla-1.5/master/createPayment.png
+[1]: https://raw.github.com/PayUUA/Joomla-2-Virtuemart/master/settings.png
+[2]: https://raw.github.com/PayUUA/Joomla-2-Virtuemart/master/createPayment.png
