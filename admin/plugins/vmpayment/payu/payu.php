@@ -122,21 +122,6 @@ class plgVmPaymentPayU extends vmPSPlugin {
 
 $narr = $forsend = array();
 
-foreach ( $cart->products as $v)
-{
-    $forsend['ORDER_PNAME'][] = $v->product_name;
-    $forsend['ORDER_PINFO'][] = $v->product_s_desc;
-    $forsend['ORDER_PCODE'][] = $v->product_sku;
-    $forsend['ORDER_PRICE'][] = $v->product_price;
-    $forsend['ORDER_QTY'][] = $v->quantity;
-    $forsend['ORDER_VAT'][] = $method->PAYU_VAT;
-}
-
-
-
-$option  = array(   'merchant' => $method->PAYU_MERCHANT, 
-                    'secretkey' =>  $method->PAYU_SECRET_KEY, 
-                    'debug' => $method->PAYU_DEBUG );
 
 $currency = "UAH";
 
@@ -149,6 +134,40 @@ if ( $method->PAYU_COUNTRY == "RU"  )
 $currency = ( $method->PAYU_SYSTEM_CURRENCY == 1 ) ? $currencyObj->currency_code_3 : $currency;
 
 
+
+$q = 'SELECT `virtuemart_currency_id` FROM `#__virtuemart_currencies` WHERE `currency_code_3` ="'.$currency.'" ';
+$db = &JFactory::getDBO();
+$db->setQuery($q);
+$currency_id = $db->loadResult();
+
+    
+
+
+
+
+foreach ( $cart->products as $v)
+{
+    $paymentCurrency = CurrencyDisplay::getInstance($currencyObj->virtuemart_currency_id);
+    $totalInPaymentCurrency = round($paymentCurrency->convertCurrencyTo($currency_id, $v->product_price, false), 2);
+
+    $forsend['ORDER_PNAME'][] = $v->product_name;
+    $forsend['ORDER_PINFO'][] = $v->product_s_desc;
+    $forsend['ORDER_PCODE'][] = $v->product_sku;
+    $forsend['ORDER_PRICE'][] = $totalInPaymentCurrency; #$v->product_price;
+    $forsend['ORDER_QTY'][] = $v->quantity;
+    $forsend['ORDER_VAT'][] = $method->PAYU_VAT;
+}
+
+$button = "<div><img src='http://www.demo.payu.org.ua/img/loader.gif' width='50px' style='margin:20px 20px;'></div>".
+          "<script>
+            setTimeout( subform, 100 );
+            function subform(){ document.getElementById('PayUForm').submit(); }
+          </script>";
+
+$option  = array(   'merchant' => $method->PAYU_MERCHANT, 
+                    'secretkey' =>  $method->PAYU_SECRET_KEY, 
+                    'debug' => $method->PAYU_DEBUG,
+                    'button' => $button );
 
 $user = &$cart->BT;
 

@@ -127,7 +127,7 @@ class PayU
 #-----------------------------
 	private function genereteForm( $data )
 	{	
-		$form = '<form method="post" action="'.$this->luUrl.'" accept-charset="utf-8">';
+		$form = '<form method="post" action="'.$this->luUrl.'" id="PayUForm" accept-charset="utf-8">';
 		foreach ( $data as $k => $v ) $form .= $this->makeString( $k, $v );
 		return $form . $this->button."</form>";
 	}	
