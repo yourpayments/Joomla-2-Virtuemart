@@ -15,38 +15,39 @@ class plgVmPaymentPayU extends vmPSPlugin {
 
     // instance of class
     public static $_this = false;
-	
+    
 
 
     function __construct(& $subject=null, $config=null) {
-	
-	if($subject&&$config) parent::__construct($subject, $config);
+    
+    if($subject&&$config) parent::__construct($subject, $config);
 
-	$this->_psType = 'payment'; 
-	$this->_configTable = '#__virtuemart_' . $this->_psType . 'methods';
-	$this->_configTableFieldName = $this->_psType . '_params';
-	$this->_configTableFileName = $this->_psType . 'methods'; 
-	$this->_configTableClassName = 'Table' . ucfirst($this->_psType) . 'methods'; 
-	
-	
-	    $this->_loggable = true;
-	    $this->tableFields = array_keys($this->getTableSQLFields());
+    $this->_psType = 'payment'; 
+    $this->_configTable = '#__virtuemart_' . $this->_psType . 'methods';
+    $this->_configTableFieldName = $this->_psType . '_params';
+    $this->_configTableFileName = $this->_psType . 'methods'; 
+    $this->_configTableClassName = 'Table' . ucfirst($this->_psType) . 'methods'; 
+    
+    
+        $this->_loggable = true;
+        $this->tableFields = array_keys($this->getTableSQLFields());
      
-	    $varsToPush = array( 'payment_logos' => array('', 'char'),
-		'payment_order_total' => 'decimal(15,5) NOT NULL DEFAULT \'0.00000\' ',
-		'payment_info' => array('', 'string'),
-		'PAYU_MERCHANT' => array('', 'string'),
+        $varsToPush = array( 'payment_logos' => array('', 'char'),
+        'payment_order_total' => 'decimal(15,5) NOT NULL DEFAULT \'0.00000\' ',
+        'payment_info' => array('', 'string'),
+        'PAYU_MERCHANT' => array('', 'string'),
         'PAYU_SECRET_KEY' => array('', 'string'),
-		'PAYU_DEBUG' => array(0, 'int'),
-		'status_pending' => array('', 'string'),
+        'PAYU_DEBUG' => array(0, 'int'),
+        'status_pending' => array('', 'string'),
         'status_success' => array('', 'string'),
-		'PAYU_COUNTRY' => array('', 'string'),
-		'PAYU_BACK_REF' => array('', 'string'),		
+        'PAYU_SYSTEM_CURRENCY' => array('', 'string'),        
+        'PAYU_COUNTRY' => array('', 'string'),
+        'PAYU_BACK_REF' => array('', 'string'),     
         'PAYU_LANGUAGE' => array('', 'string'),
         'PAYU_VAT' => array('', 'string')
-	    );
+        );
 
-	    $res = $this->setConfigParameterable($this->_configTableFieldName, $varsToPush);
+        $res = $this->setConfigParameterable($this->_configTableFieldName, $varsToPush);
 
     }
 
@@ -55,64 +56,70 @@ class plgVmPaymentPayU extends vmPSPlugin {
      * @author Valérie Isaksen
      */
     protected function getVmPluginCreateTableSQL() {
-	return $this->createTableSQL('Payment Standard Table');
+    return $this->createTableSQL('Payment Standard Table');
     }
     /**
      * Fields to create the payment table
      * @return string SQL Fileds
      */
     function getTableSQLFields() {
-	$SQLfields = array(
-	    'id' => 'tinyint(1) unsigned NOT NULL AUTO_INCREMENT',
-	    'virtuemart_order_id' => 'int(11) UNSIGNED DEFAULT NULL',
-	    'order_number' => 'char(32) DEFAULT NULL',
-	    'virtuemart_paymentmethod_id' => 'mediumint(1) UNSIGNED DEFAULT NULL',
-	    'payment_name' => 'char(255) NOT NULL DEFAULT \'\' ',
-	    'payment_order_total' => 'decimal(15,5) NOT NULL DEFAULT \'0.00000\' ',
-	    'payment_currency' => 'char(3) ',
-	    'cost_per_transaction' => ' decimal(10,2) DEFAULT NULL ',
-	    'cost_percent_total' => ' decimal(10,2) DEFAULT NULL ',
-	    'tax_id' => 'smallint(11) DEFAULT NULL'
-	);
+    $SQLfields = array(
+        'id' => 'tinyint(1) unsigned NOT NULL AUTO_INCREMENT',
+        'virtuemart_order_id' => 'int(11) UNSIGNED DEFAULT NULL',
+        'order_number' => 'char(32) DEFAULT NULL',
+        'virtuemart_paymentmethod_id' => 'mediumint(1) UNSIGNED DEFAULT NULL',
+        'payment_name' => 'char(255) NOT NULL DEFAULT \'\' ',
+        'payment_order_total' => 'decimal(15,5) NOT NULL DEFAULT \'0.00000\' ',
+        'payment_currency' => 'char(3) ',
+        'cost_per_transaction' => ' decimal(10,2) DEFAULT NULL ',
+        'cost_percent_total' => ' decimal(10,2) DEFAULT NULL ',
+        'tax_id' => 'smallint(11) DEFAULT NULL'
+    );
 
-	return $SQLfields;
+    return $SQLfields;
     }
 
-	
-	 function __getVmPluginMethod($method_id) {
-	if (!($method = $this->getVmPluginMethod($method_id))) 
-	return null; 
-	else return $method;
+    
+     function __getVmPluginMethod($method_id) {
+    if (!($method = $this->getVmPluginMethod($method_id))) 
+    return null; 
+    else return $method;
     }
-	
-	/**
+    
+    /**
      *
      *
      * @author Valérie Isaksen
      */
     function plgVmConfirmedOrder($cart, $order) {
-	if (!($method = $this->getVmPluginMethod($order['details']['BT']->virtuemart_paymentmethod_id))) {
-	    return null; // Another method was selected, do nothing
-	}
-	if (!$this->selectedThisElement($method->payment_element)) {
-	    return false;
-	}
+    if (!($method = $this->getVmPluginMethod($order['details']['BT']->virtuemart_paymentmethod_id))) {
+        return null; // Another method was selected, do nothing
+    }
+    if (!$this->selectedThisElement($method->payment_element)) {
+        return false;
+    }
 
     include_once( dirname(__FILE__). DS ."/PayU.cls.php" );
+    if (!class_exists ('VirtueMartModelCurrency')) {
+            require(JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'currency.php');
+        }
+       
 
+    $lang = JFactory::getLanguage();
+    $filename = 'com_virtuemart';
+    $lang->load($filename, JPATH_ADMINISTRATOR);
+    $vendorId = 0;
 
-	$lang = JFactory::getLanguage();
-	$filename = 'com_virtuemart';
-	$lang->load($filename, JPATH_ADMINISTRATOR);
-	$vendorId = 0;
+    $html = "";
 
-	$html = "";
-
-	if (!class_exists('VirtueMartModelOrders'))
-	    require( JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php' );
-	
+    if (!class_exists('VirtueMartModelOrders'))
+        require( JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php' );
+    
     $this->getPaymentCurrency($method);
-	
+     $currencyModel = new VirtueMartModelCurrency();
+     $currencyObj = $currencyModel->getCurrency ($order['details']['BT']->order_currency);
+
+
 $narr = $forsend = array();
 
 foreach ( $cart->products as $v)
@@ -138,6 +145,9 @@ if ( $method->PAYU_COUNTRY == "RU"  )
    $option['luUrl'] = "https://secure.payu.ru/order/lu.php";
    $currency = "RUB";
 }
+
+$currency = ( $method->PAYU_SYSTEM_CURRENCY == 1 ) ? $currencyObj->currency_code_3 : $currency;
+
 
 
 $user = &$cart->BT;
@@ -166,10 +176,10 @@ if ( $method->PAYU_BACK_REF != "" ) $narr['BACK_REF'] = $method->PAYU_BACK_REF;
 $forsend  = array_merge( $narr, $forsend );
 $html = PayU::getInst()->setOptions( $option )->setData( $forsend )->LU();
 
- $cart->emptyCart();
+$cart->emptyCart();
 
     JRequest::setVar('html', $html);
-	return true;  // empty cart, send order
+    return true;  // empty cart, send order
     }
 
 
@@ -199,7 +209,7 @@ $html = PayU::getInst()->setOptions( $option )->setData( $forsend )->LU();
      *
      */
     function plgVmOnStoreInstallPaymentPluginTable($jplugin_id) {
-	return $this->onStoreInstallPluginTable($jplugin_id);
+    return $this->onStoreInstallPluginTable($jplugin_id);
     }
 
     /**
@@ -214,7 +224,7 @@ $html = PayU::getInst()->setOptions( $option )->setData( $forsend )->LU();
      *
      */
     public function plgVmOnSelectCheckPayment(VirtueMartCart $cart) {
-	return $this->OnSelectCheck($cart);
+    return $this->OnSelectCheck($cart);
     }
 
     /**
@@ -230,7 +240,7 @@ $html = PayU::getInst()->setOptions( $option )->setData( $forsend )->LU();
      * @author Max Milbers
      */
     public function plgVmDisplayListFEPayment(VirtueMartCart $cart, $selected = 0, &$htmlIn) {
-	return $this->displayListFE($cart, $selected, $htmlIn);
+    return $this->displayListFE($cart, $selected, $htmlIn);
     }
 
     /*
@@ -247,20 +257,20 @@ $html = PayU::getInst()->setOptions( $option )->setData( $forsend )->LU();
      */
 
     public function plgVmonSelectedCalculatePricePayment(VirtueMartCart $cart, array &$cart_prices, &$cart_prices_name) {
-	return $this->onSelectedCalculatePrice($cart, $cart_prices, $cart_prices_name);
+    return $this->onSelectedCalculatePrice($cart, $cart_prices, $cart_prices_name);
     }
 
     function plgVmgetPaymentCurrency($virtuemart_paymentmethod_id, &$paymentCurrencyId) {
 
-	if (!($method = $this->getVmPluginMethod($virtuemart_paymentmethod_id))) {
-	    return null; // Another method was selected, do nothing
-	}
-	if (!$this->selectedThisElement($method->payment_element)) {
-	    return false;
-	}
-	 $this->getPaymentCurrency($method);
+    if (!($method = $this->getVmPluginMethod($virtuemart_paymentmethod_id))) {
+        return null; // Another method was selected, do nothing
+    }
+    if (!$this->selectedThisElement($method->payment_element)) {
+        return false;
+    }
+     $this->getPaymentCurrency($method);
 
-	$paymentCurrencyId = $method->payment_currency;
+    $paymentCurrencyId = $method->payment_currency;
     }
 
     /**
@@ -273,7 +283,7 @@ $html = PayU::getInst()->setOptions( $option )->setData( $forsend )->LU();
      *
      */
     function plgVmOnCheckAutomaticSelectedPayment(VirtueMartCart $cart, array $cart_prices = array()) {
-	return $this->onCheckAutomaticSelected($cart, $cart_prices);
+    return $this->onCheckAutomaticSelected($cart, $cart_prices);
     }
 
     /**
@@ -286,7 +296,7 @@ $html = PayU::getInst()->setOptions( $option )->setData( $forsend )->LU();
      * @author Valerie Isaksen
      */
     public function plgVmOnShowOrderFEPayment($virtuemart_order_id, $virtuemart_paymentmethod_id, &$payment_name) {
-	$this->onShowOrderFE($virtuemart_order_id, $virtuemart_paymentmethod_id, $payment_name);
+    $this->onShowOrderFE($virtuemart_order_id, $virtuemart_paymentmethod_id, $payment_name);
     }
 
     
@@ -300,15 +310,15 @@ $html = PayU::getInst()->setOptions( $option )->setData( $forsend )->LU();
      * @author Valerie Isaksen
      */
     function plgVmonShowOrderPrintPayment($order_number, $method_id) {
-	return $this->onShowOrderPrint($order_number, $method_id);
+    return $this->onShowOrderPrint($order_number, $method_id);
     }
 
     function plgVmDeclarePluginParamsPayment($name, $id, &$data) {
-	return $this->declarePluginParams('payment', $name, $id, $data);
+    return $this->declarePluginParams('payment', $name, $id, $data);
     }
 
     function plgVmSetOnTablePluginParamsPayment($name, $id, &$table) {
-	return $this->setOnTablePluginParams($name, $id, $table);
+    return $this->setOnTablePluginParams($name, $id, $table);
     }
      
 }

@@ -26,14 +26,19 @@
 	<param name="PAYU_SECRET_KEY" type="text"  label="VMPAYMENT_PAYU_PAYU_SECRET_KEY" description="VMPAYMENT_PAYU_PAYU_SECRET_KEY_EXPLAIN" />
 	
 	<param name="PAYU_DEBUG" type="list" default="1" label="VMPAYMENT_PAYU_PAYU_DEBUG" description="VMPAYMENT_PAYU_PAYU_DEBUG_EXPLAIN">
-		<option value="1">ON</option>
-		<option value="0">OFF</option>
+		<option value="1">Включен</option>
+		<option value="0">Выключен</option>
 	</param>
 
 
 	<param name="PAYU_COUNTRY" type="list" default="1" label="VMPAYMENT_PAYU_COUNTRY" description="VMPAYMENT_PAYU_COUNTRY_EXPLAIN">
-		<option value="UA">Ukraine</option>
-		<option value="RU">Russia</option>
+		<option value="UA">Украина</option>
+		<option value="RU">Россия</option>
+	</param>
+
+	<param name="PAYU_SYSTEM_CURRENCY" type="list" default="0" label="VMPAYMENT_PAYU_PAYU_SYSTEM_CURRENCY" description="VMPAYMENT_PAYU_PAYU_SYSTEM_CURRENCY_EXPLAIN">
+		<option value="1">Да</option>
+		<option value="0">Нет</option>
 	</param>
 
 
@@ -42,15 +47,15 @@
 	<param name="PAYU_VAT" type="text"  default="0" label="VMPAYMENT_PAYU_PAYU_VAT" description="VMPAYMENT_PAYU_PAYU_VAT_EXPLAIN" />
 	
 	<param name="PAYU_LANGUAGE" type="list" default="RU" label="VMPAYMENT_PAYU_PAYU_LANGUAGE" description="VMPAYMENT_PAYU_PAYU_LANGUAGE_EXPLAIN">
-		<option value="RU">Russian</option>
-		<option value="EN">English</option>
-		<option value="TR">Turkish</option>
-		<option value="RO">Romanian</option>
-		<option value="HU">Hungarian</option>
-		<option value="DE">Germany</option>
-		<option value="FR">French</option>
-		<option value="IT">Italian</option>
-		<option value="ES">Spanish</option>
+		<option value="RU">Русский</option>
+		<option value="EN">Английский</option>
+		<option value="TR">Турецкий</option>
+		<option value="RO">Румынский</option>
+		<option value="HU">Венгерский</option>
+		<option value="DE">Немецкий</option>
+		<option value="FR">Французский</option>
+		<option value="IT">Итальянский</option>
+		<option value="ES">Испанский</option>
 	</param>
 
 	<field name="status_pending" type="vmorderstate" scope="com_virtuemart" default="P" label="VMPAYMENT_PAYU_STATUS_PENDING" description="VMPAYMENT_PAYU_STATUS_PENDING_EXPLAIN" />
