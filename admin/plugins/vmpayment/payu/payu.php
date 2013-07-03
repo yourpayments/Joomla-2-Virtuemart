@@ -152,7 +152,7 @@ foreach ( $cart->products as $v)
 
     $forsend['ORDER_PNAME'][] = $v->product_name;
     $forsend['ORDER_PINFO'][] = $v->product_s_desc;
-    $forsend['ORDER_PCODE'][] = $v->product_sku;
+  #  $forsend['ORDER_PCODE'][] = $v->product_sku;
     $forsend['ORDER_PRICE'][] = $totalInPaymentCurrency; #$v->product_price;
     $forsend['ORDER_QTY'][] = $v->quantity;
     $forsend['ORDER_VAT'][] = $method->PAYU_VAT;
