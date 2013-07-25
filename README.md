@@ -22,7 +22,7 @@
 ![Скриншот][2]
 
 7. Зайдите на админ-страницу вашего мерчанта PayU и укажите IPN адресс по примеру :
-`http://{ваш домен}/plugins/vpayment/payu/payu_notify.php`
+`http://{ваш домен}/plugins/vmpayment/payu/payu_notify.php`
 
 
 [1]: https://raw.github.com/PayUUA/Joomla-2-Virtuemart/master/settings.png
