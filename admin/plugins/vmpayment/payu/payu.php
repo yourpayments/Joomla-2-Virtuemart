@@ -123,7 +123,7 @@ class plgVmPaymentPayU extends vmPSPlugin {
 $narr = $forsend = array();
 
 
-$currency = "RUB";
+$currency = "UAH";
 
 if ( $method->PAYU_COUNTRY == "RU"  )
 {
