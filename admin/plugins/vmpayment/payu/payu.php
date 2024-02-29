@@ -127,7 +127,7 @@ $currency = "UAH";
 
 if ( $method->PAYU_COUNTRY == "RU"  )
 {
-   $option['luUrl'] = "https://secure.payu.ru/order/lu.php";
+   $option['luUrl'] = "https://secure.ypmn.ru/order/lu.php";
    $currency = "RUB";
 }
 
