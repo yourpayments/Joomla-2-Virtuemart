@@ -1,12 +1,12 @@
 <?php
 class PayU
 {
-	var $luUrl = "https://secure.payu.ru/order/lu.php", 
+	var $luUrl = "https://secure.ypmn.ru/order/lu.php",
 		$button = "<input type='submit'>",
 		$debug = 0,
 		$showinputs = "hidden",
-		$idnUrl = "https://secure.payu.ru/order/idn.php",
-		$irnUrl = "https://secure.payu.ru/order/irn.php" ;
+		$idnUrl = "https://secure.ypmn.ru/order/idn.php",
+		$irnUrl = "https://secure.ypmn.ru/order/irn.php" ;
 
 	private static $Inst = false, $merchant, $key;
 

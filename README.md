@@ -1,11 +1,11 @@
-(For PayU Ukraine and Russian ONLY)
--------
+# «Твои платежи», модуль для Joomla 2.x Virtuemart 2.x
 
-Модуль для Joomla 2.x Virtuemart 2.x 
-==========
+![](https://repository-images.githubusercontent.com/638835276/ff494b04-d65b-4843-8759-e85c689a7e80)
+
+[НКО «Твои Платежи»](https://YPMN.ru/ "Платёжная система для сайтов, платформ и приложений") - платёжная система для сайтов, платформ, игр и приложений. 
+
 ( Протестирован на Joomla 2.5.9 Virtuemart 2.0.20b )
 
--------
 
 1. Для установки необходимо скачать архив этого репозитория (желательно zip)
 
@@ -21,9 +21,9 @@
 6. Заполните поля по примеру скриншота и нажмите "Сохранить"
 ![Скриншот][2]
 
-7. Зайдите на админ-страницу вашего мерчанта PayU и укажите IPN адресс по примеру :
+7. Зайдите на админ-страницу вашего мерчанта «Твои Платежи» и укажите IPN адресс по примеру :
 `http://{ваш домен}/plugins/vmpayment/payu/payu_notify.php`
 
 
-[1]: https://raw.github.com/PayUUA/Joomla-2-Virtuemart/master/settings.png
-[2]: https://raw.github.com/PayUUA/Joomla-2-Virtuemart/master/createPayment.png
+[1]: https://raw.github.com/yourpayments/Joomla-2-Virtuemart/master/settings.png
+[2]: https://raw.github.com/yourpayments/Joomla-2-Virtuemart/master/createPayment.png
